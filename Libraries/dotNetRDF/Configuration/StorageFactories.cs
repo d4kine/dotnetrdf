@@ -49,6 +49,7 @@ namespace VDS.RDF.Configuration
                              FourStore = "VDS.RDF.Storage.FourStoreConnector",
                              Fuseki = "VDS.RDF.Storage.FusekiConnector",
                              InMemory = "VDS.RDF.Storage.InMemoryManager",
+                             Neptune = "VDS.RDF.Storage.AmazonNeptuneConnector",
                              ReadOnly = "VDS.RDF.Storage.ReadOnlyConnector",
                              ReadOnlyQueryable = "VDS.RDF.Storage.QueryableReadOnlyConnector",
                              ReadWriteSparql = "VDS.RDF.Storage.ReadWriteSparqlConnector",
@@ -134,6 +135,7 @@ namespace VDS.RDF.Configuration
                         storageServer = new AllegroGraphServer(server, catalog);
                     }
                     break;
+
                 case DatasetFile:
                     // Get the Filename and whether the loading should be done asynchronously
                     String file = ConfigurationLoader.GetConfigurationString(g, objNode, g.CreateUriNode(UriFactory.Create(ConfigurationLoader.PropertyFromFile)));
@@ -198,6 +200,12 @@ namespace VDS.RDF.Configuration
                             storageProvider = new InMemoryManager();
                         }
                     }
+                    break;
+
+                case Neptune:
+                    server = ConfigurationLoader.GetConfigurationString(g, objNode, propServer);
+                    if (server == null) return false;
+                    storageProvider = new AmazonNeptuneConnector(server, server); // TODO ck: get reader and writer from config
                     break;
 
                 case ReadOnly:
